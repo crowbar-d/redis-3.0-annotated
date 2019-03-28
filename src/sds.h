@@ -61,10 +61,14 @@ struct sdshdr {
 
 /*
  * 返回 sds 实际保存的字符串的长度
- *
+ * 找到当前的 struct sdshdr，返回它的 len
  * T = O(1)
  */
 static inline size_t sdslen(const sds s) {
+    //sds 是指向 buf 的，指针往前 sizeof(struct sdshdr)，就指向当前的 struct sdshdr 了。
+    //sizeof(struct) 时，结构体的 flexible array 会被忽略
+    //https://redis.io/topics/internals-sds
+    //https://stackoverflow.com/questions/6732184/does-a-flexible-array-member-increase-sizeof-a-struct
     struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));
     return sh->len;
 }
